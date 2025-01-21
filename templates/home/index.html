@@ -142,71 +142,32 @@
                 <div class="chat-sidebar">
                   <div class="contacts-list scrollbar-overlay">
                     <div class="nav nav-tabs border-0 flex-column" role="tablist" aria-orientation="vertical">
-  
-                      
-                      
-                   
-
+            
                       <h1>ساختار درختی Media</h1>
-
+            
                       <ul id="media-tree">
                         {% media_tree as media_structure %}
                         {% for item in media_structure %}
                             {% include "tree_node.html" with node=item %}
                         {% endfor %}
                       </ul>
-                      <script>
-                       
-                        function toggleFolder(id) {
-                            const folderElement = document.getElementById(id);
-                            if (folderElement) {
-                                if (folderElement.style.display === "none") {
-                                    folderElement.style.display = "block";
-                                } else {
-                                    folderElement.style.display = "none"; 
-                                }
-                            }
-                        }
-                    
-                        
-                        document.addEventListener("DOMContentLoaded", function () {
-                            const treeNodes = document.querySelectorAll("#media-tree ul");
-                            treeNodes.forEach((node) => {
-                                
-                                node.style.display = "none";
-                            });
-                    
-                           
-                            const rootNodes = document.querySelectorAll("#media-tree > ul");
-                            rootNodes.forEach((node) => {
-                                node.style.display = "block";
-                            });
-                        });
-                    </script>
-                     
-                
-                    
+                      
 
 
                     </div>
                   </div>
                   <form class="contacts-search-wrapper">
                     <div class="form-group mb-0 position-relative d-md-none d-lg-block w-100 h-100">
-                      <input class="form-control form-control-sm chat-contacts-search border-0 h-100" type="text" placeholder="Search contacts ..." /><span class="fas fa-search contacts-search-icon"></span>
+                      <input class="form-control form-control-sm chat-contacts-search border-0 h-100" type="text" placeholder="Search contacts ..." />
+                      <span class="fas fa-search contacts-search-icon"></span>
                     </div>
-                    <button class="btn btn-sm btn-transparent d-none d-md-inline-block d-lg-none"><span class="fas fa-search fs-10"></span></button>
+                    <button class="btn btn-sm btn-transparent d-none d-md-inline-block d-lg-none">
+                      <span class="fas fa-search fs-10"></span>
+                    </button>
                   </form>
                 </div>
-                <div class="tab-content card-chat-content">
-                  
-                    <h1>لیست فایل‌های استاتیک</h1>
-                    <h1>ساختار درختی Media</h1>
-    <div id="media-tree">
-        
-                  
-                </div>
-              </div>
-            </div>
+                
+      
             <footer class="footer">
               <div class="row g-0 justify-content-between fs-10 mt-4 mb-3">
                 <div class="col-12 col-sm-auto text-center">
