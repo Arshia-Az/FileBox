@@ -14,12 +14,12 @@ def build_tree(directory):
                 'type': 'folder',
                 'children': build_tree(entry.path),
             })
-        elif entry.is_file():
-      
+        elif entry.is_file() and entry.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff')):
             tree.append({
                 'name': entry.name,
-                'type': 'file',
+                'type': 'image',
             })
+
     return tree
 
 @register.simple_tag
