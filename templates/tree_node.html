@@ -1,0 +1,21 @@
+<li>
+    {% if node.type == "folder" %}
+        <!-- نمایش پوشه -->
+        <span class="folder" onclick="toggleFolder('{{ node.name|slugify }}')">
+            
+            📁 {{ node.name }}
+            
+        </span>
+        <ul id="{{ node.name|slugify }}">
+            {% for child in node.children %}
+                {% include "tree_node.html" with node=child %}
+            {% endfor %}
+        </ul>
+    {% elif node.type == "file" %}
+        <!-- نمایش فایل -->
+        <a href="{{ node.url }}" class="file" target="_blank" onclick="fileClicked('{{ node.name }}')">
+            📄 {{ node.name }}
+        </a>
+    {% endif %}
+</li>
+
