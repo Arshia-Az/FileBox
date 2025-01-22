@@ -15,7 +15,7 @@ def home(request):
 
 
 
-
+# get folder from the media and show in template for show i use ajax 
 def get_folder_files(request):
     folder_path = request.GET.get('path')
     base_path = r"C:\Users\User\Desktop\TreeView\media"
@@ -38,6 +38,8 @@ def get_folder_files(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
+
+# delete image only from media
 @csrf_exempt
 def delete_file(request):
     if request.method == 'POST':
@@ -62,7 +64,7 @@ def delete_file(request):
 
     return JsonResponse({'error': 'درخواست نامعتبر است.'}, status=400)
 
-
+# rename image from media
 @csrf_exempt
 def rename_file(request):
     if request.method == 'POST':
@@ -76,11 +78,10 @@ def rename_file(request):
 
  
         old_file_path = base_path + name_url
-        print(old_file_path)
-        print('#############################')
+  
         if old_file_path.endswith(old_name):
             new_file_path = old_file_path.replace(old_name, new_name)
-            print(new_file_path)
+
             if os.path.exists(old_file_path):
                 try:
                     os.rename(old_file_path, new_file_path)

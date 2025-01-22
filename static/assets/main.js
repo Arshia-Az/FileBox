@@ -1,4 +1,5 @@
 
+// عکسای داخل پوشه ی media رو میگیره 
 $(document).ready(function() {
   
     $(".folder").click(function() {  
@@ -16,8 +17,7 @@ $(document).ready(function() {
                 if (response && response.files) {
                   
                   var imageContainer = $("#image-container");
-                  imageContainer.empty(); // پاک کردن محتوای قبلی
-
+                  imageContainer.empty(); 
                   response.files.forEach(function(file) {              
                       if (file.url) {  
                            var figure = $('<figure>').addClass('image-figure');
@@ -55,6 +55,7 @@ $(document).ready(function() {
         });
     });
     
+    // search box
     $("#search-box").on("keyup", function () {
       var searchTerm = $(this).val().toLowerCase();
 
@@ -110,9 +111,14 @@ $(document).ready(function() {
                         name_url: nameUrl
                     },
                     success: function(response) {
-                        alert('نام با موفقیت تغییر کرد.');
+                        // به‌روزرسانی لینک مرتبط
+                        var link = $('a.image').filter(function() {
+                            return $(this).text().trim() === '📄 ' + fullName;
+                        });
+                        link.text('📄 ' + newFullName); // به‌روزرسانی متن لینک
+                        link.attr('onclick', "fileClicked('" + newFullName + "')"); // به‌روزرسانی مقدار onclick
 
-                      
+                        // جایگزینی ورودی با figcaption و نمایش نام جدید
                         var updatedCaption = $('<figcaption>').text(newFullName);
                         input.replaceWith(updatedCaption);
                     },
@@ -166,27 +172,48 @@ $(document).ready(function() {
     });
 });
 
-  $(document).on('click', '#delete_image', function() {
+
+ // delete image
+$(document).on('click', '#delete_image', function() {
     var figure = $(this).closest('figure'); 
-    figure.remove();
-    var fileUrl = figure.find('img').attr('src') 
-    alert('11111111111111111111111111111111111111111111111')
+    
+    
+    var fileUrl = figure.find('img').attr('src'); 
+    var caption = figure.find('figcaption');
+    var fullName = caption.text(); 
+
+    
+    if (!confirm('آیا مطمئن هستید که می‌خواهید این تصویر را حذف کنید؟')) {
+        return;
+    }
+
+    
     $.ajax({
         url: '/delete-file/',
         type: 'POST',
         data: {
-          fileUrl: fileUrl,
+            fileUrl: fileUrl,
         },
         success: function(response) {
-            alert('تصویر با موفقیت حذف شد.');
+            alert('فایل با موفقیت حذف شد.');
+
+            
+            figure.remove();
+
+            
+            $('a.image').filter(function() {
+                return $(this).text().trim() === '📄 ' + fullName;
+            }).remove();
         },
         error: function(error) {
             alert('خطا در حذف تصویر.');
         }
     });
 });
+
 });
 
+// for show folder
 function toggleFolder(id) {
     const folderElement = document.getElementById(id);
    
