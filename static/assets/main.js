@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+  
     $(".folder").click(function() {  
 
         var folderPath = $(this).find('input[name="path"]').val();
@@ -18,15 +19,31 @@ $(document).ready(function() {
                   imageContainer.empty(); // پاک کردن محتوای قبلی
 
                   response.files.forEach(function(file) {              
-                      if (file.url) {
-                          // ایجاد یک تگ <img> برای هر فایل
-                          var img = $('<img>').attr('src', file.url).attr('alt', file.name);
-                          img.css({
-                              width: '150px',
-                              height: 'auto',
-                              margin: '10px'
-                          }); // تنظیم استایل دلخواه
-                          imageContainer.append(img); // افزودن <img> به container
+                      if (file.url) {  
+                           var figure = $('<figure>').addClass('image-figure');
+                           
+                           var img = $('<img>').attr('src', file.url).attr('alt', file.name).attr('id', file.name);        
+                           img.css({
+                               width: '200px',
+                               height: 'auto',
+                               margin: '10px'
+                           });
+
+                           
+                           var caption = $('<figcaption>').text(file.name);
+
+                           
+                           var editButton = $('<button>').text('Edit').addClass('action-button edit-button');
+                           var deleteButton = $('<button>').text('Delete').addClass('action-button delete-button').attr('id', 'delete_image');
+
+                           
+                           var buttonContainer = $('<div>').addClass('button-container').append(editButton, deleteButton);
+
+                           
+                           figure.append(img).append(caption).append(buttonContainer);
+
+                           
+                           imageContainer.append(figure);
                       }
                   });
 
@@ -37,6 +54,41 @@ $(document).ready(function() {
             }
         });
     });
+    
+    $("#search-box").on("keyup", function () {
+      var searchTerm = $(this).val().toLowerCase();
+
+      
+      $("#image-container figure").each(function() {
+          var captionText = $(this).find('figcaption').text().toLowerCase();
+
+          if (captionText.includes(searchTerm)) {
+              $(this).show();
+          } else {
+              $(this).hide(); 
+          }
+      });
+  });
+
+  $(document).on('click', '#delete_image', function() {
+    var figure = $(this).closest('figure'); 
+    figure.remove();
+    var fileUrl = figure.find('img').attr('src') 
+
+    $.ajax({
+        url: '/delete-file/',
+        type: 'POST',
+        data: {
+          fileUrl: fileUrl,
+        },
+        success: function(response) {
+            alert('تصویر با موفقیت حذف شد.');
+        },
+        error: function(error) {
+            alert('خطا در حذف تصویر.');
+        }
+    });
+});
 });
 
 function toggleFolder(id) {

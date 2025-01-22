@@ -4,4 +4,4 @@ from django.db import models
 
 
 class Profile(models.Model):
-    avatar = models.ImageField(upload_to = 'images/avrat/')
+    avatar = models.ImageField(upload_to = 'images/avatar/')

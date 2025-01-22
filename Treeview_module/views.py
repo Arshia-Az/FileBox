@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import os
 from .models import Profile
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 # Create your views here.
 
 
@@ -34,3 +36,28 @@ def get_folder_files(request):
         return JsonResponse({'files': files})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+
+@csrf_exempt
+def delete_file(request):
+    if request.method == 'POST':
+        base_path = r"C:\Users\User\Desktop\TreeView"
+        
+        fileUrl = request.POST.get('fileUrl')
+
+        if not fileUrl:
+            return JsonResponse({'error': 'نام فایل ارسال نشده است.'}, status=400)
+
+
+        file_path = base_path + fileUrl
+        # بررسی وجود فایل
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)  # حذف فایل
+                return JsonResponse({'message': 'فایل با موفقیت حذف شد.'})
+            except Exception as e:
+                return JsonResponse({'error': f'خطا در حذف فایل: {str(e)}'}, status=500)
+        else:
+            return JsonResponse({'error': 'فایل وجود ندارد.'}, status=404)
+
+    return JsonResponse({'error': 'درخواست نامعتبر است.'}, status=400)
