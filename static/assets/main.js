@@ -3,7 +3,6 @@ $(document).ready(function() {
     $(".folder").click(function() {  
 
         var folderPath = $(this).find('input[name="path"]').val();
-     
 
         $.ajax({
             url: '/get-folder-files/', 
@@ -18,7 +17,7 @@ $(document).ready(function() {
                   var imageContainer = $("#image-container");
                   imageContainer.empty(); // پاک کردن محتوای قبلی
 
-                  response.files.forEach(function(file) {
+                  response.files.forEach(function(file) {              
                       if (file.url) {
                           // ایجاد یک تگ <img> برای هر فایل
                           var img = $('<img>').attr('src', file.url).attr('alt', file.name);

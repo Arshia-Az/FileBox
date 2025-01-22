@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
+from .models import Profile
 # Create your views here.
 
 
@@ -15,19 +16,21 @@ def home(request):
 
 def get_folder_files(request):
     folder_path = request.GET.get('path')
-    
+    base_path = r"C:\Users\User\Desktop\TreeView\media"
+    print(base_path)
     try:
         files = []
         
         for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
             
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                relative_path = os.path.relpath(folder_path, base_path)
                 files.append({
                     'name': filename,
-                    'url': f'/media/{filename}' if os.path.isfile(file_path) else None
+                    'url': f'/media/{relative_path}/{filename}'
                 })
-                print(files)
+                
         return JsonResponse({'files': files})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)

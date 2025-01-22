@@ -16,7 +16,7 @@ def build_tree(directory):
                 'path': entry.path, 
                 'children': build_tree(entry.path),
             })
-        elif entry.is_file() and entry.name.lower().endswith(('.png', '.jpg', '.jpeg')):
+        elif entry.is_file() and entry.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
             tree.append({
                 'name': entry.name, 
                 'type': 'image', 
