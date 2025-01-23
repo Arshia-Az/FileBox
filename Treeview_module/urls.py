@@ -8,4 +8,5 @@ urlpatterns = [
     path('delete-file/', delete_file, name='delete_file'),
     path('rename-file/', rename_file, name='rename_file'),
     path('create_folder/', create_folder, name='create_folder'),
+    path('delete_folder/', delete_folder, name='delete_folder'),
 ]

@@ -250,3 +250,53 @@ function hideCreateFileForm() {
     form.style.display = "none";
 }  
 
+
+$(document).ready(function () {
+    // نمایش فرم ایجاد پوشه
+    $("#show-create-folder").click(function () {
+        $("#create-folder-form").show(); // نمایش فرم ایجاد
+        $("#delete-folder-form").hide(); // مخفی کردن فرم حذف
+    });
+
+    // نمایش فرم حذف پوشه
+    $("#show-delete-folder").click(function () {
+        $("#delete-folder-form").show(); // نمایش فرم حذف
+        $("#create-folder-form").hide(); // مخفی کردن فرم ایجاد
+    });
+
+    // مخفی کردن فرم حذف
+    $("#hide-delete-folder").click(function () {
+        $("#delete-folder-form").hide(); // مخفی کردن فرم حذف
+    });
+
+    // انتخاب پوشه و ذخیره مسیر آن برای حذف
+    $(".folder").click(function () {
+        var folderPath = $(this).find("input[name='path']").val(); // گرفتن مسیر پوشه
+        $("#delete-path").val(folderPath); // ذخیره مسیر در فرم حذف
+        
+    });
+
+    // ارسال فرم حذف از طریق Ajax
+    $("#delete-folder-form").submit(function (e) {
+        e.preventDefault(); 
+
+        var folderPath = $("#delete-path").val();
+        
+        $.ajax({
+            url: "/delete_folder/",
+            type: "POST",
+            data: {
+                folder_path: folderPath,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(), 
+            },
+            success: function (response) {
+                alert("Folder deleted successfully!");
+                
+                location.reload(); 
+            },
+            error: function (xhr, status, error) {
+                alert("Error deleting folder: " + error);
+            },
+        });
+    });
+});

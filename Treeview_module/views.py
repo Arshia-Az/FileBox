@@ -111,4 +111,28 @@ def create_folder(request):
 
 
 
-        
+def delete_folder(request):
+    if request.method == "POST":
+        folder_path = request.POST.get("folder_path")
+        try:
+            # مسیر کامل پوشه
+            full_path = os.path.join(settings.MEDIA_ROOT, folder_path)
+
+            if os.path.exists(full_path) and os.path.isdir(full_path):
+                # حذف تمام فایل‌ها و زیرفولدرها
+                for root, dirs, files in os.walk(full_path, topdown=False):
+                    for file in files:
+                        os.remove(os.path.join(root, file))
+                    for dir in dirs:
+                        os.rmdir(os.path.join(root, dir))
+                
+                # حذف پوشه اصلی
+                os.rmdir(full_path)
+
+                return JsonResponse({"status": "success", "message": "Folder and its contents deleted successfully."})
+            else:
+                return JsonResponse({"status": "error", "message": "Folder does not exist."})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": f"Error deleting folder: {str(e)}"})
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method."})
