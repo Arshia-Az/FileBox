@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import os
 from .models import Profile
@@ -92,3 +92,23 @@ def rename_file(request):
                 return JsonResponse({'error': 'فایل قدیمی وجود ندارد.'}, status=404)
 
     return JsonResponse({'error': 'درخواست نامعتبر است.'}, status=400)
+
+def create_folder(request):
+    if request.method == "POST":
+        folder_name = request.POST.get('folder_name')  
+        current_path = request.POST.get('path_folder')
+    
+        folder_path = os.path.join(settings.MEDIA_ROOT, current_path, folder_name)
+
+        try:
+            # ایجاد پوشه
+            os.makedirs(folder_path, exist_ok=True)  
+        except Exception as e:
+            print(f"Error creating folder: {e}")
+
+        # بازگشت به صفحه قبلی
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
+        

@@ -3,9 +3,9 @@
 $(document).ready(function() {
   
     $(".folder").click(function() {  
-
+        
         var folderPath = $(this).find('input[name="path"]').val();
-
+        $('#path').val(folderPath)
         $.ajax({
             url: '/get-folder-files/', 
             type: 'GET',
@@ -39,7 +39,7 @@ $(document).ready(function() {
                            
                            var buttonContainer = $('<div>').addClass('button-container').append(editButton, deleteButton);
 
-                           
+                        //    var inputAll = $('<input>').attr('type', 'hidden').attr('name', 'path').val(folderPath);
                            figure.append(img).append(caption).append(buttonContainer);
 
                            
@@ -216,7 +216,7 @@ $(document).on('click', '#delete_image', function() {
 // for show folder
 function toggleFolder(id) {
     const folderElement = document.getElementById(id);
-   
+    console.log(this);
     if (folderElement) {
       
       if (folderElement.style.display === "none") {
@@ -238,3 +238,15 @@ function toggleFolder(id) {
       node.style.display = "block";
     });
   });
+
+
+function showCreateFolderForm() {
+    const form = document.getElementById("create-folder-form");
+    form.style.display = "block";
+}
+
+function hideCreateFileForm() {
+    const form = document.getElementById("create-folder-form");
+    form.style.display = "none";
+}  
+

@@ -142,8 +142,22 @@
                 <div class="chat-sidebar">
                   <div class="contacts-list scrollbar-overlay">
                     <div class="nav nav-tabs border-0 flex-column" role="tablist" aria-orientation="vertical">
-            
-                      <h3 style='text-center'>media</h3>
+                      
+                      <h3 style="text-align: center;" class='m-3'>Media</h3>
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <button class="btn btn-primary" onclick="showCreateFolderForm()">+ Create New Folder</button>
+                        </div>
+
+                        <div id="create-folder-form" style="display: none; text-align: center; margin-bottom: 20px;">
+                          <form action="{% url 'create_folder' %}" method="post">
+                              {% csrf_token %}
+                              <input type="hidden" id="path" name="path_folder" >
+                              <input type="text" name="folder_name" placeholder="Enter folder name" required>
+                              <button type="submit" class="btn btn-success">Create</button>
+                              <button type="button" class="btn btn-secondary" onclick="hideCreateFileForm()">Cancel</button>
+                          </form>
+                      </div>
+                      
             
                       <ul id="media-tree">
                         {% media_tree as media_structure %}
