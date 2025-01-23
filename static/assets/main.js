@@ -258,6 +258,11 @@ $(document).ready(function () {
         $("#delete-folder-form").hide(); // مخفی کردن فرم حذف
     });
 
+    // مخفی کردن ایجاد پوشه
+    $("#hide-create-folder").click(function () {
+        $("#create-folder-form").hide(); // مخفی کردن فرم ایجاد پوشه
+    });
+
     // نمایش فرم حذف پوشه
     $("#show-delete-folder").click(function () {
         $("#delete-folder-form").show(); // نمایش فرم حذف
@@ -317,7 +322,7 @@ $(document).ready(function () {
     $(".folder").click(function () {
         var folderPath = $(this).find("input[name='path']").val(); // مسیر پوشه انتخاب‌شده
         $("#image-folder-path").val(folderPath); // ذخیره مسیر در فرم
-        alert("Folder selected for image upload: " + folderPath); // پیام نمایش مسیر
+        
     });
 
     // ارسال چند تصویر با Ajax

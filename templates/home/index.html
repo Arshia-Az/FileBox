@@ -146,9 +146,9 @@
                       <h3 style="text-align: center;" class='m-3'>Media</h3>
                       <div style="text-align: center; margin-bottom: 10px;">
                         <!-- دکمه ایجاد پوشه -->
-                        <button id="show-create-folder" class="btn btn-primary">+ Create New Folder</button>
+                        <button id="show-create-folder" class="btn btn-primary">اضافه کردن پوشه +</button>
                         <!-- دکمه حذف پوشه -->
-                        <button id="show-delete-folder" class="btn btn-danger">Delete Folder</button>
+                        <button id="show-delete-folder" class="btn btn-danger">حذف کردن پوشه</button>
                     </div>
                     
                     <!-- فرم ایجاد پوشه -->
@@ -157,8 +157,8 @@
                             {% csrf_token %}
                             <input type="hidden" id="path" name="path_folder">
                             <input type="text" name="folder_name" placeholder="Enter folder name" required>
-                            <button type="submit" class="btn btn-success">Create</button>
-                            <button type="button" class="btn btn-secondary" id="hide-create-folder">Cancel</button>
+                            <button type="submit" class="btn btn-success">ایجاد</button>
+                            <button type="button" class="btn btn-secondary" id="hide-create-folder">لغو</button>
                         </form>
                     </div>
                     
@@ -167,14 +167,14 @@
                         <form id="delete-folder" method="post">
                             {% csrf_token %}
                             <input type="hidden" id="delete-path" name="folder_path">
-                            <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                            <button type="button" class="btn btn-secondary" id="hide-delete-folder">Cancel</button>
+                            <button type="submit" class="btn btn-danger">تایید</button>
+                            <button type="button" class="btn btn-secondary" id="hide-delete-folder">لغو</button>
                         </form>
                     </div>
                     
                     <div style="text-align: center; margin-bottom: 10px;">
                       <!-- دکمه نمایش فرم آپلود -->
-                      <button id="show-upload-image" class="btn btn-primary">Upload Images</button>
+                      <button id="show-upload-image" class="btn btn-primary">آپلود عکس</button>
                   </div>
                   
                   <!-- فرم آپلود تصاویر -->
@@ -182,9 +182,9 @@
                       <form id="multi-image-upload-form" method="post" enctype="multipart/form-data">
                           {% csrf_token %}
                           <input type="hidden" id="image-folder-path" name="folder_path">
-                          <input type="file" id="image-files" name="images" accept="image/*" multiple required>
+                          <input type="file" class="mb-3" id="image-files" name="images" accept="image/*" multiple required>
                           <button type="submit" class="btn btn-success">Upload</button>
-                          <button type="button" class="btn btn-secondary" id="hide-upload-image">Cancel</button>
+                          <button type="button" class="btn btn-secondary" id="hide-upload-image">لغو</button>
                       </form>
                   </div>
                   
