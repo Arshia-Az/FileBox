@@ -136,3 +136,32 @@ def delete_folder(request):
             return JsonResponse({"status": "error", "message": f"Error deleting folder: {str(e)}"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method."})
+
+
+@csrf_exempt
+def upload_images(request):
+    if request.method == "POST":
+        folder_path = request.POST.get("folder_path")  # مسیر پوشه
+        images = request.FILES.getlist("images")  # گرفتن لیست فایل‌های تصویر
+
+        if not folder_path or not images:
+            return JsonResponse({"error": "Invalid folder path or no images provided"}, status=400)
+
+        # ایجاد مسیر پوشه در صورت وجود نداشتن
+        folder_full_path = os.path.join(settings.MEDIA_ROOT, folder_path)
+        os.makedirs(folder_full_path, exist_ok=True)
+
+        uploaded_files = []
+        try:
+            for image in images:
+                save_path = os.path.join(folder_full_path, image.name)
+                with open(save_path, "wb") as f:
+                    for chunk in image.chunks():
+                        f.write(chunk)
+                uploaded_files.append(image.name)
+
+            return JsonResponse({"message": "Images uploaded successfully!", "files": uploaded_files})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)

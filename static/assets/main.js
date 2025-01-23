@@ -300,3 +300,52 @@ $(document).ready(function () {
         });
     });
 });
+
+$(document).ready(function () {
+    // نمایش فرم آپلود تصاویر
+    $("#show-upload-image").click(function () {
+        $("#upload-image-form").show(); // نمایش فرم
+        $("#upload-message").hide(); // مخفی کردن پیام
+    });
+
+    // مخفی کردن فرم آپلود تصاویر
+    $("#hide-upload-image").click(function () {
+        $("#upload-image-form").hide(); // مخفی کردن فرم
+    });
+
+    // انتخاب پوشه و ذخیره مسیر آن
+    $(".folder").click(function () {
+        var folderPath = $(this).find("input[name='path']").val(); // مسیر پوشه انتخاب‌شده
+        $("#image-folder-path").val(folderPath); // ذخیره مسیر در فرم
+        alert("Folder selected for image upload: " + folderPath); // پیام نمایش مسیر
+    });
+
+    // ارسال چند تصویر با Ajax
+    $("#multi-image-upload-form").submit(function (e) {
+        e.preventDefault(); // جلوگیری از ارسال عادی فرم
+
+        var formData = new FormData(this); // گرفتن اطلاعات فرم
+
+        // اضافه کردن چندین فایل به فرم دیتا
+        var files = $("#image-files")[0].files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append("images", files[i]);
+        }
+
+        $.ajax({
+            url: "/upload_images/", // آدرس ویو آپلود
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#upload-message").text("Images uploaded successfully!").css("color", "green").show();
+                $("#upload-image-form").hide(); // مخفی کردن فرم
+                // به‌روزرسانی نمایش تصاویر (در صورت نیاز)
+            },
+            error: function (xhr, status, error) {
+                $("#upload-message").text("Error uploading images: " + error).css("color", "red").show();
+            },
+        });
+    });
+});

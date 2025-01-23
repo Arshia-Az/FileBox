@@ -172,6 +172,26 @@
                         </form>
                     </div>
                     
+                    <div style="text-align: center; margin-bottom: 10px;">
+                      <!-- دکمه نمایش فرم آپلود -->
+                      <button id="show-upload-image" class="btn btn-primary">Upload Images</button>
+                  </div>
+                  
+                  <!-- فرم آپلود تصاویر -->
+                  <div id="upload-image-form" style="display: none; text-align: center; margin-bottom: 20px;">
+                      <form id="multi-image-upload-form" method="post" enctype="multipart/form-data">
+                          {% csrf_token %}
+                          <input type="hidden" id="image-folder-path" name="folder_path">
+                          <input type="file" id="image-files" name="images" accept="image/*" multiple required>
+                          <button type="submit" class="btn btn-success">Upload</button>
+                          <button type="button" class="btn btn-secondary" id="hide-upload-image">Cancel</button>
+                      </form>
+                  </div>
+                  
+                  <!-- پیام موفقیت یا خطا -->
+                  <div id="upload-message" style="display: none; text-align: center; margin-top: 20px;"></div>
+                  
+                  
 
 
             
