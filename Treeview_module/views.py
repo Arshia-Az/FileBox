@@ -165,3 +165,22 @@ def upload_images(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+def list_images(request):
+    folder_path = request.GET.get("folder_path")  # مسیر پوشه انتخاب‌شده
+
+    if not folder_path:
+        return JsonResponse({"error": "Folder path is required."}, status=400)
+
+    folder_full_path = os.path.join(settings.MEDIA_ROOT, folder_path)
+
+    if not os.path.exists(folder_full_path) or not os.path.isdir(folder_full_path):
+        return JsonResponse({"error": "Folder does not exist."}, status=404)
+
+    try:
+        # لیست کردن فایل‌های موجود در پوشه
+        images = [f for f in os.listdir(folder_full_path) if os.path.isfile(os.path.join(folder_full_path, f))]
+        return JsonResponse({"images": images})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)    

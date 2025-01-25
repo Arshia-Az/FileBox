@@ -10,4 +10,5 @@ urlpatterns = [
     path('create_folder/', create_folder, name='create_folder'),
     path('delete_folder/', delete_folder, name='delete_folder'),
     path('upload_images/', upload_images, name='upload_images'),
+    path('list_images/', list_images, name='list_images'),
 ]

@@ -33,11 +33,12 @@ $(document).ready(function() {
                            var caption = $('<figcaption>').text(file.name);
 
                            
-                           var editButton = $('<button>').text('rename').addClass('action-button edit-button').attr('id', 'rename_image');
+                           var renameButton = $('<button>').text('rename').addClass('action-button rename-button').attr('id', 'rename_image');
+                           var editButton = $('<button>').text('edit').addClass('action-button edit-button').attr('id', 'edit_image').attr('data-image-url', file.url);
                            var deleteButton = $('<button>').text('Delete').addClass('action-button delete-button').attr('id', 'delete_image');
 
                            
-                           var buttonContainer = $('<div>').addClass('button-container').append(editButton, deleteButton);
+                           var buttonContainer = $('<div>').addClass('button-container').append(renameButton, deleteButton, editButton);
 
                         //    var inputAll = $('<input>').attr('type', 'hidden').attr('name', 'path').val(folderPath);
                            figure.append(img).append(caption).append(buttonContainer);
@@ -201,9 +202,13 @@ $(document).on('click', '#delete_image', function() {
             figure.remove();
 
             
-            $('a.image').filter(function() {
+            $('a.image').filter(function () {
+                
                 return $(this).text().trim() === '📄 ' + fullName;
-            }).remove();
+            }).each(function () {
+                // حذف والد <li>
+                $(this).closest('li').remove();
+            });
         },
         error: function(error) {
             alert('خطا در حذف تصویر.');
@@ -330,7 +335,7 @@ $(document).ready(function () {
         e.preventDefault(); // جلوگیری از ارسال عادی فرم
 
         var formData = new FormData(this); // گرفتن اطلاعات فرم
-
+        alert(formData)
         // اضافه کردن چندین فایل به فرم دیتا
         var files = $("#image-files")[0].files;
         for (let i = 0; i < files.length; i++) {
@@ -354,3 +359,54 @@ $(document).ready(function () {
         });
     });
 });
+
+
+$(document).on('click', '.edit-button', function () {
+    var imageUrl = $(this).data('image-url'); // آدرس تصویر را از دکمه دریافت کنید
+    var image = new Image();
+    image.src = imageUrl;
+    
+    // بعد از بارگذاری تصویر، ابعاد آن را نمایش می‌دهیم
+    image.onload = function() {
+        // دریافت ابعاد تصویر
+        var width = image.width;
+        var height = image.height;
+        
+        // نمایش ابعاد در فیلدها
+        $('#image-width').val(width);
+        $('#image-height').val(height);
+        
+        // قرار دادن تصویر در modal
+        $('#modal-image').attr('src', imageUrl);
+        
+        // نمایش modal
+        $('#imageModal').modal('show');
+    };
+});
+
+// تغییر ابعاد تصویر پس از کلیک بر روی دکمه "تغییر ابعاد تصویر"
+$('#resize-button').on('click', function() {
+    var newWidth = $('#image-width').val();
+    var newHeight = $('#image-height').val();
+
+    // بررسی ورودی‌ها
+    if (newWidth && newHeight && !isNaN(newWidth) && !isNaN(newHeight)) {
+        // تغییر اندازه تصویر با ابعاد جدید
+        $('#modal-image').css({
+            'width': newWidth + 'px',
+            'height': newHeight + 'px'
+        });
+        
+        // تغییر آدرس تصویر بر اساس ابعاد جدید
+        var currentImageUrl = $('#modal-image').attr('src');
+        var newImageUrl = currentImageUrl.split('?')[0] + `?width=${newWidth}&height=${newHeight}`;  // فرض می‌کنیم URL برای ابعاد متغیر است
+        
+        // تغییر آدرس تصویر به URL جدید با ابعاد جدید
+        $('#modal-image').attr('src', newImageUrl);
+    } else {
+        alert("لطفاً ابعاد معتبر وارد کنید.");
+    }
+});
+    
+
+
