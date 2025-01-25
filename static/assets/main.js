@@ -25,7 +25,7 @@ $(document).ready(function() {
                            var img = $('<img>').attr('src', file.url).attr('alt', file.name).attr('id', file.name);        
                            img.css({
                                width: '200px',
-                               height: 'auto',
+                               height: '200px',
                                margin: '10px'
                            });
 
