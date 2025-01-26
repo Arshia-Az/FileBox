@@ -384,29 +384,70 @@ $(document).on('click', '.edit-button', function () {
     };
 });
 
-// تغییر ابعاد تصویر پس از کلیک بر روی دکمه "تغییر ابعاد تصویر"
-$('#resize-button').on('click', function() {
-    var newWidth = $('#image-width').val();
-    var newHeight = $('#image-height').val();
+//تغییر سایز عکس به صورت خودکار و دستی
+document.addEventListener('DOMContentLoaded', function() {
+    var image = document.getElementById('modal-image');
+    var widthInput = document.getElementById('image-width');
+    var heightInput = document.getElementById('image-height');
+    var lockButton = document.getElementById('lock-button');
+    var resizeButton = document.getElementById('resize-button');
 
-    // بررسی ورودی‌ها
-    if (newWidth && newHeight && !isNaN(newWidth) && !isNaN(newHeight)) {
-        // تغییر اندازه تصویر با ابعاد جدید
-        $('#modal-image').css({
-            'width': newWidth + 'px',
-            'height': newHeight + 'px'
-        });
-        
-        // تغییر آدرس تصویر بر اساس ابعاد جدید
-        var currentImageUrl = $('#modal-image').attr('src');
-        var newImageUrl = currentImageUrl.split('?')[0] + `?width=${newWidth}&height=${newHeight}`;  // فرض می‌کنیم URL برای ابعاد متغیر است
-        
-        // تغییر آدرس تصویر به URL جدید با ابعاد جدید
-        $('#modal-image').attr('src', newImageUrl);
-    } else {
-        alert("لطفاً ابعاد معتبر وارد کنید.");
+    // نسبت تصویر (Aspect Ratio)
+    var aspectRatio = 0;
+    var isLocked = true; // حالت قفل پیش‌فرض
+
+    // هنگامی که مدال نمایش داده می‌شود
+    var imageModal = document.getElementById('imageModal');
+    imageModal.addEventListener('shown.bs.modal', function() {
+        // محاسبه نسبت تصویر بر اساس ابعاد طبیعی
+        aspectRatio = image.naturalWidth / image.naturalHeight;
+
+        // نمایش ابعاد فعلی تصویر در فیلدها
+        widthInput.value = image.offsetWidth;
+        heightInput.value = image.offsetHeight;
+    });
+
+    // تغییر خودکار ابعاد در حالت قفل
+    function autoResize() {
+        if (isLocked && aspectRatio > 0) {
+            if (this === widthInput) {
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+            } else if (this === heightInput) {
+                widthInput.value = Math.round(heightInput.value * aspectRatio);
+            }
+        }
     }
+
+    // اضافه کردن رویداد input به فیلدها
+    widthInput.addEventListener('input', autoResize);
+    heightInput.addEventListener('input', autoResize);
+
+    // تغییر حالت قفل/باز کردن
+    lockButton.addEventListener('click', function() {
+        isLocked = !isLocked; // تغییر حالت قفل
+        lockButton.innerHTML = isLocked ? '<i class="fas fa-lock"></i> قفل' : '<i class="fas fa-lock-open"></i> باز';
+        lockButton.classList.toggle('btn-secondary', isLocked);
+        lockButton.classList.toggle('btn-success', !isLocked);
+
+        // اگر قفل فعال شد، ابعاد را بر اساس نسبت تصویر تنظیم کن
+        if (isLocked) {
+            autoResize.call(widthInput);
+        }
+    });
+
+    // تغییر ابعاد تصویر با کلیک روی دکمه
+    resizeButton.addEventListener('click', function() {
+        var newWidth = parseInt(widthInput.value);
+        var newHeight = parseInt(heightInput.value);
+
+        // اعتبارسنجی مقادیر وارد شده
+        if (newWidth > 0 && newHeight > 0) {
+            // اعمال ابعاد جدید روی تصویر
+            image.style.width = newWidth + 'px';
+            image.style.height = newHeight + 'px';
+            image.style.maxWidth = 'none'; // غیرفعال کردن max-width
+        } else {
+            alert('لطفا مقادیر معتبر وارد کنید!');
+        }
+    });
 });
-    
-
-

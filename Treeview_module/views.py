@@ -9,10 +9,8 @@ from django.conf import settings
 
 def home(request):
     context = {
-
     }
     return render(request, 'home/index.html', context)
-
 
 
 # get folder from the media and show in template for show i use ajax 
@@ -20,6 +18,7 @@ def get_folder_files(request):
     folder_path = request.GET.get('path')
     base_path = r"C:\Users\User\Desktop\TreeView\media"
     print(base_path)
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     try:
         files = []
         
@@ -166,7 +165,7 @@ def upload_images(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
+# show the image when clicl on folder
 def list_images(request):
     folder_path = request.GET.get("folder_path")  # مسیر پوشه انتخاب‌شده
 
@@ -184,3 +183,4 @@ def list_images(request):
         return JsonResponse({"images": images})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)    
+
