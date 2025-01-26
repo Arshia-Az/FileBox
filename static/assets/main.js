@@ -360,27 +360,48 @@ $(document).ready(function () {
     });
 });
 
-
+// دریافت image
 $(document).on('click', '.edit-button', function () {
     var imageUrl = $(this).data('image-url'); // آدرس تصویر را از دکمه دریافت کنید
     var image = new Image();
     image.src = imageUrl;
     
-    // بعد از بارگذاری تصویر، ابعاد آن را نمایش می‌دهیم
+
     image.onload = function() {
-        // دریافت ابعاد تصویر
+
         var width = image.width;
         var height = image.height;
         
-        // نمایش ابعاد در فیلدها
+
         $('#image-width').val(width);
         $('#image-height').val(height);
-        
-        // قرار دادن تصویر در modal
         $('#modal-image').attr('src', imageUrl);
-        
-        // نمایش modal
         $('#imageModal').modal('show');
+
+
+        $.ajax({
+            url: 'get-image-info/', // آدرس View در سمت سرور
+            type: 'POST', // متد ارسال
+            data: JSON.stringify({ imageUrl: imageUrl }), // داده‌هایی که ارسال می‌کنید
+            contentType: 'application/json', // نوع داده ارسالی
+            headers: { 
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() // اضافه کردن CSRF Token
+            },
+            success: function(response) {
+                console.log('Response from server:', response);
+
+                // در صورت موفقیت، اطلاعات بازگشتی را نمایش دهید
+                $('#server-response').html(`
+                    <p>عرض: ${response.width}</p>
+                    <p>ارتفاع: ${response.height}</p>
+                    <p>متادیتا: ${JSON.stringify(response.metadata)}</p>
+                `);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error from server:', error);
+                alert('خطایی در ارسال درخواست به سرور رخ داده است.');
+            }
+        });
     };
 });
 
@@ -448,6 +469,35 @@ document.addEventListener('DOMContentLoaded', function() {
             image.style.maxWidth = 'none'; // غیرفعال کردن max-width
         } else {
             alert('لطفا مقادیر معتبر وارد کنید!');
+        }
+    });
+});
+$(document).on('click', '#resize-button', function () {
+    var imageUrl = $('#modal-image').attr('src'); // گرفتن آدرس تصویر از modal
+    var newWidth = $('#image-width').val(); // دریافت عرض جدید از input
+    var newHeight = $('#image-height').val(); // دریافت طول جدید از input
+
+    // ارسال درخواست AJAX به سرور
+    $.ajax({
+        url: '/resize-image/', // آدرس view برای تغییر ابعاد
+        type: 'POST',
+        data: JSON.stringify({
+            imageUrl: imageUrl, // ارسال آدرس تصویر
+            width: newWidth, // ارسال عرض جدید
+            height: newHeight // ارسال طول جدید
+        }),
+        contentType: 'application/json',
+        headers: {
+            'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() // اضافه کردن CSRF Token
+        },
+        success: function(response) {
+            // در صورت موفقیت، تصویر جدید را به modal برگردانید
+            $('#modal-image').attr('src', response.newImageUrl);
+            alert('ابعاد تصویر با موفقیت تغییر کرد!');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error from server:', error);
+            alert('خطایی در تغییر ابعاد تصویر رخ داد.');
         }
     });
 });

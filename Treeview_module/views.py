@@ -4,8 +4,11 @@ import os
 from .models import Profile
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-# Create your views here.
-
+import json
+from PIL import Image
+from PIL.PngImagePlugin import PngInfo
+import requests
+from io import BytesIO
 
 def home(request):
     context = {
@@ -184,3 +187,72 @@ def list_images(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)    
 
+@csrf_exempt
+def get_image_info(request):
+    if request.method == 'POST':
+        try:
+            # دریافت داده‌های ارسالی از کلاینت
+            data = json.loads(request.body)
+            image_url = data.get('imageUrl')
+            
+            if not image_url:
+                return JsonResponse({'error': 'آدرس تصویر ارسال نشده است'}, status=400)
+            base_path = r"C:\Users\User\Desktop\TreeView"
+            img = base_path + image_url
+            
+            # باز کردن تصویر
+            image = Image.open(img)
+
+            # ایجاد متادیتا
+            metadata = PngInfo()
+            metadata.add_text("width", str(image.width))  # عرض تصویر
+            metadata.add_text("height", str(image.height))  # ارتفاع تصویر
+
+            # ذخیره تصویر در حافظه با متادیتای جدید
+            output = BytesIO()
+            image.save(output, format="PNG", pnginfo=metadata)
+            output.seek(0)
+
+            # بازگشت اطلاعات به کلاینت
+            return JsonResponse({
+                'width': image.width,
+                'height': image.height,
+                'message': 'اطلاعات متادیتا با موفقیت ایجاد شد.'
+            })
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'تنها درخواست‌های POST مجاز هستند'}, status=400)
+
+
+@csrf_exempt
+def resize_image(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            image_url = data.get('imageUrl')
+            print(image_url)
+            print('!!!!!!!!!!!!!!!')
+            base_path = r"C:\Users\User\Desktop\TreeView"
+            img = base_path + image_url
+            new_width = int(data.get('width'))
+            new_height = int(data.get('height'))
+
+            if not image_url or not new_width or not new_height:
+                return JsonResponse({'error': 'اطلاعات ناقص است!'}, status=400)
+
+            # باز کردن تصویر و تغییر ابعاد
+            image = Image.open(img)
+            resized_image = image.resize((new_width, new_height))
+
+            # ذخیره‌سازی تصویر تغییر اندازه داده شده
+            resized_image.save(img)
+
+            # بازگشت مسیر تصویر جدید به سمت کلاینت
+            return JsonResponse({'newImageUrl': image_url})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'درخواست نامعتبر'}, status=400)    

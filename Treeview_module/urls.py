@@ -11,4 +11,8 @@ urlpatterns = [
     path('delete_folder/', delete_folder, name='delete_folder'),
     path('upload_images/', upload_images, name='upload_images'),
     path('list_images/', list_images, name='list_images'),
+    path('get-image-info/', get_image_info, name='get_image_info'),
+    path('resize-image/', resize_image, name='resize_image'),
+    
+
 ]
