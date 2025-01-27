@@ -1,6 +1,6 @@
 {% extends "base/index.html" %}
 {% load media_tree %}
-
+{% load static %}
 {% block body %}
     <!-- ===============================================-->
     <!--    Main Content-->
@@ -116,7 +116,7 @@
       </div>
       <div class="modal-body text-center">
         <!-- نمایش تصویر -->
-        <img id="modal-image" src="path/to/your/image.jpg" alt="Preview" class="img-fluid rounded shadow-sm">
+        <img id="modal-image" src="" alt="Preview" class="img-fluid rounded shadow-sm">
         
         <!-- فیلدهای طول و عرض -->
         <div class="mt-3">
@@ -127,6 +127,8 @@
           <input type="number" id="image-height" class="form-control">
         </div>
 
+
+        
         <!-- دکمه قفل/باز کردن -->
         <div class="mt-3">
           <button id="lock-button" class="btn btn-secondary">
@@ -134,6 +136,22 @@
           </button>
         </div>
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+
+
+
+        <div class="modal-body text-center">
+          <!-- تصویر برای Cropper -->
+          
+      
+          <!-- دکمه‌های مربوط به Crop -->
+          <div class="mt-3">
+              <button id="crop-button" class="btn btn-success">ذخیره برش</button>
+              <button id="reset-button" class="btn btn-secondary">بازنشانی</button>
+          </div>
+      </div>
+      
+
         <!-- دکمه تغییر ابعاد -->
         <div class="mt-3">
           <button id="resize-button" class="btn btn-primary">تغییر ابعاد تصویر</button>
@@ -142,6 +160,7 @@
     </div>
   </div>
 </div>
+
 
 
 {% endblock body %}

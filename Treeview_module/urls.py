@@ -13,6 +13,7 @@ urlpatterns = [
     path('list_images/', list_images, name='list_images'),
     path('get-image-info/', get_image_info, name='get_image_info'),
     path('resize-image/', resize_image, name='resize_image'),
+    path('upload-cropped-image/', upload_cropped_image, name='upload_cropped_image'),
     
 
 ]

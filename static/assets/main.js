@@ -221,7 +221,7 @@ $(document).on('click', '#delete_image', function() {
 // for show folder
 function toggleFolder(id) {
     const folderElement = document.getElementById(id);
-    console.log(this);
+
     if (folderElement) {
       
       if (folderElement.style.display === "none") {
@@ -405,6 +405,65 @@ $(document).on('click', '.edit-button', function () {
     };
 });
 
+
+// تعریف متغیر Cropper
+let cropper;
+
+// زمانی که Modal باز شد، Cropper فعال شود
+$('#imageModal').on('shown.bs.modal', function () {
+    const image = document.getElementById('modal-image');
+    // بررسی وجود نمونه قبلی و از بین بردن آن
+    if (cropper) {
+        cropper.destroy();
+    }
+    // اعمال Cropper روی تصویر
+    cropper = new Cropper(image, {
+        aspectRatio: NaN, // نسبت طول و عرض (آزاد)
+        viewMode: 2, // حالت مشاهده
+        autoCropArea: 1, // نمایش ناحیه کراپ اولیه
+        responsive: true,
+        background: false // حذف پس‌زمینه اطراف
+    });
+});
+
+// دکمه کراپ
+$('#crop-button').on('click', function () {
+    if (!cropper) {
+        alert('ابتدا تصویری را برای برش انتخاب کنید.');
+        return;
+    }
+
+    // دریافت ناحیه برش خورده
+    const croppedCanvas = cropper.getCroppedCanvas();
+    const croppedImage = croppedCanvas.toDataURL(); // تبدیل به Base64
+
+    // ارسال تصویر کراپ‌شده به سرور
+    $.ajax({
+        url: 'upload-cropped-image/', // آدرس View سرور
+        type: 'POST',
+        data: JSON.stringify({ croppedImage: croppedImage }),
+        contentType: 'application/json',
+        headers: { 
+            'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() // اضافه کردن CSRF Token
+        },
+        success: function(response) {
+            alert('تصویر با موفقیت برش خورده و ذخیره شد.');
+            $('#imageModal').modal('hide'); // بستن Modal
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('خطایی در ذخیره تصویر برش خورده رخ داده است.');
+        }
+    });
+});
+
+// دکمه بازنشانی کراپ
+$('#reset-button').on('click', function () {
+    if (cropper) {
+        cropper.reset();
+    }
+});
+
 //تغییر سایز عکس به صورت خودکار و دستی
 document.addEventListener('DOMContentLoaded', function() {
     var image = document.getElementById('modal-image');
@@ -501,3 +560,4 @@ $(document).on('click', '#resize-button', function () {
         }
     });
 });
+
