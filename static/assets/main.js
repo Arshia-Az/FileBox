@@ -426,7 +426,6 @@ $('#imageModal').on('shown.bs.modal', function () {
     });
 });
 
-// دکمه کراپ
 $('#crop-button').on('click', function () {
     if (!cropper) {
         alert('ابتدا تصویری را برای برش انتخاب کنید.');
@@ -436,26 +435,37 @@ $('#crop-button').on('click', function () {
     // دریافت ناحیه برش خورده
     const croppedCanvas = cropper.getCroppedCanvas();
     const croppedImage = croppedCanvas.toDataURL(); // تبدیل به Base64
+    const originalImagePath = $('#modal-image').attr('src'); // آدرس تصویر اصلی
 
     // ارسال تصویر کراپ‌شده به سرور
     $.ajax({
         url: 'upload-cropped-image/', // آدرس View سرور
         type: 'POST',
-        data: JSON.stringify({ croppedImage: croppedImage }),
+        data: JSON.stringify({ 
+            croppedImage: croppedImage,
+            originalImagePath: originalImagePath // اضافه کردن مسیر اصلی
+        }),
         contentType: 'application/json',
         headers: { 
             'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() // اضافه کردن CSRF Token
         },
         success: function(response) {
-            alert('تصویر با موفقیت برش خورده و ذخیره شد.');
-            $('#imageModal').modal('hide'); // بستن Modal
+            if (response.success) {
+                alert('تصویر با موفقیت ذخیره شد!');
+                
+                // به‌روزرسانی تصویر با نادیده گرفتن کش مرورگر
+                $('#modal-image').attr('src', originalImagePath + '?t=' + new Date().getTime());
+            } else {
+                alert('خطایی رخ داده است: ' + response.error);
+            }
         },
         error: function(xhr, status, error) {
-            console.error('Error:', error);
-            alert('خطایی در ذخیره تصویر برش خورده رخ داده است.');
+            console.error('خطا:', error);
+            alert('خطایی در ذخیره تصویر رخ داده است.');
         }
     });
 });
+
 
 // دکمه بازنشانی کراپ
 $('#reset-button').on('click', function () {

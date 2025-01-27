@@ -260,36 +260,41 @@ def resize_image(request):
 
     return JsonResponse({'error': 'درخواست نامعتبر'}, status=400)    
 
+
 @csrf_exempt
 def upload_cropped_image(request):
     if request.method == 'POST':
         try:
-            # داده ارسال شده از سمت کلاینت را دریافت کنید
+            # داده ارسال شده از کلاینت
             data = request.body.decode('utf-8')
             cropped_image_data = eval(data).get('croppedImage', None)
+            original_image_path = eval(data).get('originalImagePath', None)  # مسیر تصویر اصلی
+            base_path = r"C:\Users\User\Desktop\TreeView"  # مسیر پایه
+            original_image_path = base_path + original_image_path
 
-            if not cropped_image_data:
-                return JsonResponse({'error': 'No image data provided.'}, status=400)
+            if not cropped_image_data or not original_image_path:
+                return JsonResponse({'error': 'Image data or original image path is missing.'}, status=400)
+
+            # بررسی وجود فایل اصلی
+            if not os.path.exists(original_image_path):
+                return JsonResponse({'error': 'Original image not found.'}, status=404)
 
             # حذف اطلاعات "data:image/png;base64,"
             format, imgstr = cropped_image_data.split(';base64,')
-            ext = format.split('/')[-1]  # استخراج فرمت تصویر (png یا jpg)
 
-            # ایجاد فایل از داده‌های Base64
-            file_data = ContentFile(base64.b64decode(imgstr), name=f'cropped_image.{ext}')
+            # ذخیره تصویر کراپ‌شده در مسیر جدید (مثلاً temp)
+            cropped_image_path = original_image_path + "_temp"  # مسیر فایل موقت
+            with open(cropped_image_path, 'wb') as f:
+                f.write(base64.b64decode(imgstr))
 
-            # مسیر ذخیره‌سازی تصویر
-            save_path = os.path.join('media', 'cropped_images')
-            os.makedirs(save_path, exist_ok=True)  # ساخت پوشه در صورت وجود نداشتن
+            # حذف فایل اصلی
+            os.remove(original_image_path)
 
-            file_path = os.path.join(save_path, file_data.name)
-
-            # ذخیره فایل روی دیسک
-            with open(file_path, 'wb') as f:
-                f.write(file_data.read())
+            # تغییر نام فایل کراپ‌شده به نام فایل اصلی
+            os.rename(cropped_image_path, original_image_path)
 
             # بازگشت پاسخ به کلاینت
-            return JsonResponse({'success': True, 'file_path': file_path}, status=200)
+            return JsonResponse({'success': True, 'message': 'Image successfully updated and original image deleted.'}, status=200)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
